@@ -89,6 +89,23 @@ describe('compilerr', function () {
             expect(err.message).to.equal('Something like an error can always happen.');
         });
 
+        it('should apply two modifiers to one variable', function () {
+            var err,
+                template;
+
+            template = {
+                message: '${error.prependIndefiniteArticle().capitalize()} can always happen.'
+            };
+
+            err = compilerr.compile(template, {
+                error: 'error'
+            });
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.message).to.equal('An error can always happen.');
+        });
+
     });
 
 });

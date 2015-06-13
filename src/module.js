@@ -37,21 +37,37 @@ function buildRegex(variable) {
 }
 
 function renderString(string, parameters) {
-    var regex = /\${([^\.]+)(\.[^\(]+\(\))*}/g,
-        result,
+    var modifiersRegex,
+        modifiersRegexResult,
+        expressionRegex,
+        expressionResult,
+        variable,
         variables = [];
 
-    result = regex.exec(string);
+    expressionRegex = /\${([^\.]+)((\.[^\(]+\(\))*)}/g;
+    expressionResult = expressionRegex.exec(string);
 
-    while (result !== null) {
-        variables.push({
-            name: result[1],
-            modifiers: (result[2] === undefined) ? [] : Array.prototype.slice.call(result, 2).map(function (modifier) {
-                return modifier.slice(1, -2);
-            })
-        });
+    while (expressionResult !== null) {
+        variable = {
+            name: expressionResult[1]
+        };
 
-        result = regex.exec(string);
+        if (expressionResult[3] !== undefined) {
+            modifiersRegex = /\.[^\(]+\(\)/g;
+            variable.modifiers = [];
+
+            modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
+
+            while (modifiersRegexResult !== null) {
+                variable.modifiers.push(modifiersRegexResult[0].slice(1, -2));
+
+                modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
+            }
+        }
+
+        variables.push(variable);
+
+        expressionResult = expressionRegex.exec(string);
     }
 
     return variables.reduce(function (template, variable) {
