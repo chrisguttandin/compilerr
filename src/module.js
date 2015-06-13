@@ -80,7 +80,8 @@ module.exports.compile = function compile(template, parameters, cause) {
         err,
         message;
 
-    if (arguments.length === 2 && parameters instanceof Error) {
+    if (arguments.length === 2 &&
+            (parameters instanceof Error || (parameters.code !== undefined && parameters.code.slice(-9) === 'Exception'))) {
         cause = parameters;
     }
 

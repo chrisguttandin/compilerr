@@ -119,11 +119,26 @@ describe('compilerr', function () {
             expect(err.cause).to.equal(cause);
         });
 
-        it('should return an error with a given cause as a third argument', function () {
+        it('should return an error with a given cause as a second argument', function () {
             var cause,
                 err;
 
             cause = new Error('a fake cause');
+
+            err = compilerr.compile({}, cause);
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.cause).to.equal(cause);
+        });
+
+        it('should return an error with a given AWS style exception as a second argument', function () {
+            var cause,
+                err;
+
+            cause = {
+                code: 'SomeCrazyException'
+            };
 
             err = compilerr.compile({}, cause);
 
