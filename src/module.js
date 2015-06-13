@@ -75,15 +75,23 @@ function renderString(string, parameters) {
     }, string);
 }
 
-module.exports.compile = function compile(template, parameters) {
+module.exports.compile = function compile(template, parameters, cause) {
     var code,
         err,
         message;
+
+    if (arguments.length === 2 && parameters instanceof Error) {
+        cause = parameters;
+    }
 
     code = (template.code === undefined) ? undefined : renderString(template.code, parameters);
     message = (template.message === undefined) ? undefined : renderString(template.message, parameters);
 
     err = (message === undefined) ? new Error() : new Error(message);
+
+    if (cause !== undefined) {
+        err.cause = cause;
+    }
 
     if (code !== undefined) {
         err.code = code;

@@ -106,6 +106,32 @@ describe('compilerr', function () {
             expect(err.message).to.equal('An error can always happen.');
         });
 
+        it('should return an error with a given cause as a third argument', function () {
+            var cause,
+                err;
+
+            cause = new Error('a fake cause');
+
+            err = compilerr.compile({}, {}, cause);
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.cause).to.equal(cause);
+        });
+
+        it('should return an error with a given cause as a third argument', function () {
+            var cause,
+                err;
+
+            cause = new Error('a fake cause');
+
+            err = compilerr.compile({}, cause);
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.cause).to.equal(cause);
+        });
+
     });
 
 });
