@@ -40,6 +40,24 @@ describe('compilerr', function () {
             expect(err.code).to.equal('a-fake-code');
         });
 
+        it('should return an error with a compiled message containing two variables', function () {
+            var err,
+                template;
+
+            template = {
+                message: 'A ${resource} at the url called "${url}" could not be found.'
+            };
+
+            err = compilerr.compile(template, {
+                resource: 'resource',
+                url: '/somewhere.json'
+            });
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.message).to.equal('A resource at the url called "/somewhere.json" could not be found.');
+        });
+
         it('should return an error with a given status', function () {
             var err,
                 template;

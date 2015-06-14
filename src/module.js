@@ -44,7 +44,7 @@ function renderString(string, parameters) {
         variable,
         variables = [];
 
-    expressionRegex = /\${([^\.]+)((\.[^\(]+\(\))*)}/g;
+    expressionRegex = /\${([^\.\}]+)((\.[^\(]+\(\))*)}/g;
     expressionResult = expressionRegex.exec(string);
 
     while (expressionResult !== null) {
