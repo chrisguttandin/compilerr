@@ -15,9 +15,14 @@
     "load-grunt-config": "^0.17.2",
     "mocha": "^2.3.3"
   },
+  "homepage": "https://github.com/chrisguttandin/compilerr",
   "main": "src/module.js",
   "name": "compilerr",
   "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisguttandin/compilerr.git"
+  },
   "scripts": {
     "test": "grunt test"
   },
