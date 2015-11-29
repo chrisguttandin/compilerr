@@ -18,6 +18,11 @@
   "engines": {
     "node" : ">=0.10.36"
   },
+  "keywords": [
+    "error",
+    "status code",
+    "template"
+  ],
   "homepage": "https://github.com/chrisguttandin/compilerr",
   "main": "src/module.js",
   "name": "compilerr",
