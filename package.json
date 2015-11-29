@@ -23,6 +23,7 @@
     "status code",
     "template"
   ],
+  "license": "MIT",
   "homepage": "https://github.com/chrisguttandin/compilerr",
   "main": "src/module.js",
   "name": "compilerr",
