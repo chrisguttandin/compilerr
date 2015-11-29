@@ -1,6 +1,6 @@
 'use strict';
 
-var indefiniteArticle = require('indefinite-article.js');
+var indefiniteArticle = require('indefinite-article');
 
 function applyModifiers(variable, modifiers) {
     if (modifiers === undefined) {
