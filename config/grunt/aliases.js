@@ -9,6 +9,6 @@ module.exports = {
         'jshint'
     ],
     test: [
-        'mochaTest:test',
+        'mochaTest:test'
     ]
 };
