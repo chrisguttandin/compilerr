@@ -27,7 +27,6 @@
   "homepage": "https://github.com/chrisguttandin/compilerr",
   "main": "src/module.js",
   "name": "compilerr",
-  "readme": "README.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/chrisguttandin/compilerr.git"
