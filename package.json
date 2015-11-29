@@ -15,6 +15,9 @@
     "load-grunt-config": "^0.17.2",
     "mocha": "^2.3.3"
   },
+  "engines": {
+    "node" : ">=0.10.36"
+  },
   "homepage": "https://github.com/chrisguttandin/compilerr",
   "main": "src/module.js",
   "name": "compilerr",
