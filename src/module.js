@@ -1,6 +1,7 @@
 'use strict';
 
-var indefiniteArticle = require('indefinite-article');
+var dashify = require('dashify'),
+    indefiniteArticle = require('indefinite-article');
 
 function applyModifiers(variable, modifiers) {
     if (modifiers === undefined) {
@@ -10,6 +11,10 @@ function applyModifiers(variable, modifiers) {
     return modifiers.reduce(function (variable, modifier) {
         if (modifier === 'capitalize') {
             return variable.charAt(0).toUpperCase() + variable.slice(1);
+        }
+
+        if (modifier === 'dashify') {
+            return dashify(variable);
         }
 
         if (modifier === 'prependIndefiniteArticle') {

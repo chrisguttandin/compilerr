@@ -90,6 +90,23 @@ describe('compilerr', function () {
             expect(err.message).to.equal('A capitalized text and even more text.');
         });
 
+        it('should dashify a variable', function () {
+            var err,
+                template;
+
+            template = {
+                message: '${text.dashify()}'
+            };
+
+            err = compilerr.compile(template, {
+                text: 'a text with spaces and camelCase'
+            });
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.message).to.equal('a-text-with-spaces-and-camel-case');
+        });
+
         it('should prepend a variable with an indefinite article', function () {
             var err,
                 template;

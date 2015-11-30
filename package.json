@@ -1,6 +1,7 @@
 {
   "author": "Christoph Guttandin",
   "dependencies": {
+    "dashify": "^0.2.0",
     "indefinite-article": "0.0.2"
   },
   "description": "A kind of templating system to compile errors.",
