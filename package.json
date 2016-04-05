@@ -7,7 +7,7 @@
   "description": "A kind of templating system to compile errors.",
   "devDependencies": {
     "chai": "^3.4.1",
-    "grunt": "^1.0.0",
+    "grunt": "^1.0.1",
     "grunt-cli": "^1.0.0",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
