@@ -1,12 +1,10 @@
-'use strict';
-
 module.exports = {
     continuous: [
         'mochaTest:test',
-        'watch:continuous',
+        'watch:continuous'
     ],
     lint: [
-        'jshint'
+        'eslint'
     ],
     test: [
         'mochaTest:test'

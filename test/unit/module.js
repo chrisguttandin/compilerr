@@ -1,6 +1,4 @@
-'use strict';
-
-var compilerr = require('../../src/module.js');
+const compilerr = require('../../src/module.js');
 
 describe('compilerr', function () {
 

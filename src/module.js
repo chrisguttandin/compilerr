@@ -1,9 +1,7 @@
-'use strict';
-
 const dashify = require('dashify');
 const indefiniteArticle = require('indefinite-article');
 
-function applyModifiers(variable, modifiers) {
+function applyModifiers (variable, modifiers) {
     if (modifiers === undefined) {
         return variable;
     }
@@ -25,18 +23,16 @@ function applyModifiers(variable, modifiers) {
     }, variable);
 }
 
-function buildRegex(variable) {
+function buildRegex (variable) {
     const expression = variable.name + variable.modifiers
-        .map(function(modifier) {
-            return '\\.' + modifier + '\\(\\)';
-        })
+        .map((modifier) => '\\.' + modifier + '\\(\\)')
         .join('');
 
     return new RegExp('\\${' + expression + '}', 'g');
 }
 
-function preRenderString(string, parameters) {
-    const expressionRegex = /\${([^\.\}]+)((\.[^\(]+\(\))*)}/g;
+function preRenderString (string, parameters) {
+    const expressionRegex = /\${([^.}]+)((\.[^(]+\(\))*)}/g;
 
     const variables = [];
 
@@ -49,7 +45,7 @@ function preRenderString(string, parameters) {
         };
 
         if (expressionResult[3] !== undefined) {
-            const modifiersRegex = /\.[^\(]+\(\)/g;
+            const modifiersRegex = /\.[^(]+\(\)/g;
 
             let modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
 
@@ -80,7 +76,7 @@ function preRenderString(string, parameters) {
                         }
 
                         return [ ...prts, (prmtrs) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
-                    }, null) // The start value doesn't really matter.
+                    }, [ ])
                 )
                 .reduce((prts, part) => [ ...prts, ...part ], []),
             [ string ]
@@ -97,7 +93,7 @@ function preRenderString(string, parameters) {
         .join('');
 }
 
-module.exports.compile = function compile(template, knownParameters = {}) {
+module.exports.compile = function compile (template, knownParameters = {}) {
     const renderCode = (template.code === undefined) ? () => undefined : preRenderString(template.code, knownParameters);
     const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
 
