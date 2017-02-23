@@ -76,7 +76,7 @@ describe('compilerr', function () {
             expect(err.code).to.equal('a-fake-code');
         });
 
-        it('should return an error with a compiled message containing two variables', function () {
+        it('should return an error with a compiled message containing two variables of known parameters', function () {
             const template = {
                 message: 'A ${resource} at the url called "${url}" could not be found.'
             };
@@ -89,6 +89,25 @@ describe('compilerr', function () {
             expect(render).to.be.a('function');
 
             const err = render();
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.message).to.equal('A resource at the url called "/somewhere.json" could not be found.');
+        });
+
+        it('should return an error with a compiled message containing two variables of missing parameters', function () {
+            const template = {
+                message: 'A ${resource} at the url called "${url}" could not be found.'
+            };
+
+            const render = compilerr.compile(template);
+
+            expect(render).to.be.a('function');
+
+            const err = render({
+                resource: 'resource',
+                url: '/somewhere.json'
+            });
 
             expect(err).to.be.an.instanceOf(Error);
 

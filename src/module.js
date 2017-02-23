@@ -64,20 +64,25 @@ const preRenderString = (string, parameters) => {
     const preRenderedParts = variables
         .reduce(
             (parts, variable) => parts
-                .map((part) => part
-                    .split(buildRegex(variable))
-                    .reduce((prts, part, index) => {
-                        if (index === 0) {
-                            return [ part ];
-                        }
+                .map((part) => {
+                    if (typeof part === 'string') {
+                        return part
+                            .split(buildRegex(variable))
+                            .reduce((prts, part, index) => {
+                                if (index === 0) {
+                                    return [ part ];
+                                }
 
-                        if (variable.name in parameters) {
-                            return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), part ];
-                        }
+                                if (variable.name in parameters) {
+                                    return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), part ];
+                                }
 
-                        return [ ...prts, (prmtrs) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
-                    }, [ ])
-                )
+                                return [ ...prts, (prmtrs) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
+                            }, [ ]);
+                    }
+
+                    return [ part ];
+                })
                 .reduce((prts, part) => [ ...prts, ...part ], []),
             [ string ]
         );
