@@ -36,9 +36,11 @@
   },
   "files": [
     "build/es5/",
-    "build/node/"
+    "build/node/",
+    "src/"
   ],
   "homepage": "https://github.com/chrisguttandin/compilerr",
+  "jsnext:main": "src/module.js",
   "keywords": [
     "error",
     "status code",
