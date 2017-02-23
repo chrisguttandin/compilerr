@@ -1,7 +1,9 @@
 module.exports = {
     build: [
         'clean:build',
-        'babel:build'
+        'sh:build',
+        'babel:build',
+        'uglify'
     ],
     continuous: [
         'test',
