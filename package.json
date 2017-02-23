@@ -9,10 +9,14 @@
   },
   "description": "A kind of templating system to compile errors.",
   "devDependencies": {
+    "babel-preset-env": "^1.1.8",
+    "babel-register": "^6.23.0",
     "chai": "^3.4.1",
     "eslint-config-holy-grail": "^15.0.0",
     "grunt": "^1.0.1",
+    "grunt-babel": "^6.0.0",
     "grunt-cli": "^1.0.0",
+    "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-test": "^0.13.0",
     "gruntify-eslint": "^3.1.0",
@@ -23,6 +27,9 @@
   "engines": {
     "node": ">=7.0.0"
   },
+  "files": [
+    "build/node/"
+  ],
   "homepage": "https://github.com/chrisguttandin/compilerr",
   "keywords": [
     "error",
@@ -30,7 +37,7 @@
     "template"
   ],
   "license": "MIT",
-  "main": "src/module.js",
+  "main": "build/node/module.js",
   "name": "compilerr",
   "repository": {
     "type": "git",

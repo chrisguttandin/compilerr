@@ -1,5 +1,5 @@
-const dashify = require('dashify');
-const indefiniteArticle = require('indefinite-article');
+import dashify from 'dashify';
+import indefiniteArticle from 'indefinite-article';
 
 function applyModifiers (variable, modifiers) {
     if (modifiers === undefined) {

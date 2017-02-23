@@ -1,12 +1,17 @@
 module.exports = {
+    build: [
+        'clean:build',
+        'babel:build'
+    ],
     continuous: [
-        'mochaTest:test',
+        'test',
         'watch:continuous'
     ],
     lint: [
         'eslint'
     ],
     test: [
+        'build',
         'mochaTest:test'
     ]
 };
