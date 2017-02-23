@@ -1,7 +1,7 @@
 'use strict';
 
-var dashify = require('dashify'),
-    indefiniteArticle = require('indefinite-article');
+const dashify = require('dashify');
+const indefiniteArticle = require('indefinite-article');
 
 function applyModifiers(variable, modifiers) {
     if (modifiers === undefined) {
@@ -26,7 +26,7 @@ function applyModifiers(variable, modifiers) {
 }
 
 function buildRegex(variable) {
-    var expression;
+    let expression;
 
     if (variable.modifiers) {
         expression = variable.name + variable.modifiers
@@ -42,26 +42,23 @@ function buildRegex(variable) {
 }
 
 function renderString(string, parameters) {
-    var modifiersRegex,
-        modifiersRegexResult,
-        expressionRegex,
-        expressionResult,
-        variable,
-        variables = [];
+    const expressionRegex = /\${([^\.\}]+)((\.[^\(]+\(\))*)}/g;
 
-    expressionRegex = /\${([^\.\}]+)((\.[^\(]+\(\))*)}/g;
-    expressionResult = expressionRegex.exec(string);
+    const variables = [];
+
+    let expressionResult = expressionRegex.exec(string);
 
     while (expressionResult !== null) {
-        variable = {
+        const variable = {
             name: expressionResult[1]
         };
 
         if (expressionResult[3] !== undefined) {
-            modifiersRegex = /\.[^\(]+\(\)/g;
-            variable.modifiers = [];
+            const modifiersRegex = /\.[^\(]+\(\)/g;
 
-            modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
+            let modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
+
+            variable.modifiers = [];
 
             while (modifiersRegexResult !== null) {
                 variable.modifiers.push(modifiersRegexResult[0].slice(1, -2));
@@ -81,19 +78,15 @@ function renderString(string, parameters) {
 }
 
 module.exports.compile = function compile(template, parameters, cause) {
-    var code,
-        err,
-        message;
-
     if (arguments.length === 2 &&
             (parameters instanceof Error || (parameters.code !== undefined && parameters.code.slice(-9) === 'Exception'))) {
         cause = parameters;
     }
 
-    code = (template.code === undefined) ? undefined : renderString(template.code, parameters);
-    message = (template.message === undefined) ? undefined : renderString(template.message, parameters);
+    const code = (template.code === undefined) ? undefined : renderString(template.code, parameters);
+    const message = (template.message === undefined) ? undefined : renderString(template.message, parameters);
 
-    err = (message === undefined) ? new Error() : new Error(message);
+    const err = (message === undefined) ? new Error() : new Error(message);
 
     if (cause !== undefined) {
         err.cause = cause;
