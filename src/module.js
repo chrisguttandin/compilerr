@@ -1,12 +1,12 @@
 import dashify from 'dashify';
 import indefiniteArticle from 'indefinite-article';
 
-function applyModifiers (variable, modifiers) {
+const applyModifiers = (variable, modifiers) => {
     if (modifiers === undefined) {
         return variable;
     }
 
-    return modifiers.reduce(function (variable, modifier) {
+    return modifiers.reduce((variable, modifier) => {
         if (modifier === 'capitalize') {
             return variable.charAt(0).toUpperCase() + variable.slice(1);
         }
@@ -21,17 +21,17 @@ function applyModifiers (variable, modifiers) {
 
         return variable;
     }, variable);
-}
+};
 
-function buildRegex (variable) {
+const buildRegex = (variable) => {
     const expression = variable.name + variable.modifiers
         .map((modifier) => '\\.' + modifier + '\\(\\)')
         .join('');
 
     return new RegExp('\\${' + expression + '}', 'g');
-}
+};
 
-function preRenderString (string, parameters) {
+const preRenderString = (string, parameters) => {
     const expressionRegex = /\${([^.}]+)((\.[^(]+\(\))*)}/g;
 
     const variables = [];
@@ -91,7 +91,7 @@ function preRenderString (string, parameters) {
             return [ ...renderedParts, preRenderedPart(missingParameters) ];
         }, [ ])
         .join('');
-}
+};
 
 export const compile = (template, knownParameters = {}) => {
     const renderCode = (template.code === undefined) ? () => undefined : preRenderString(template.code, knownParameters);
