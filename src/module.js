@@ -93,13 +93,13 @@ function preRenderString (string, parameters) {
         .join('');
 }
 
-module.exports.compile = function compile (template, knownParameters = {}) {
+export const compile = (template, knownParameters = {}) => {
     const renderCode = (template.code === undefined) ? () => undefined : preRenderString(template.code, knownParameters);
     const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
 
-    return (missingParameters, cause) => {
-        if (arguments.length === 1 &&
-                (missingParameters instanceof Error || (missingParameters !== undefined && missingParameters.code !== undefined && missingParameters.code.slice(-9) === 'Exception'))) {
+    return (missingParameters = {}, cause = undefined) => {
+        if (cause === undefined &&
+                (missingParameters instanceof Error || (missingParameters.code !== undefined && missingParameters.code.slice(-9) === 'Exception'))) {
             cause = missingParameters;
         }
 

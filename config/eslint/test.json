@@ -1,7 +1,6 @@
 {
     "env": {
-        "mocha": true,
-        "node": true
+        "mocha": true
     },
     "extends": "eslint-config-holy-grail",
     "globals": {

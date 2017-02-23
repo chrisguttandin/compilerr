@@ -1,4 +1,4 @@
-const compilerr = require('../../src/module.js');
+import * as compilerr from '../../src/module';
 
 describe('compilerr', function () {
 
