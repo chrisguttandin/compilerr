@@ -26,22 +26,16 @@ function applyModifiers(variable, modifiers) {
 }
 
 function buildRegex(variable) {
-    let expression;
-
-    if (variable.modifiers) {
-        expression = variable.name + variable.modifiers
-            .map(function(modifier) {
-                return '\\.' + modifier + '\\(\\)';
-            })
-            .join('');
-    } else {
-        expression = variable.name;
-    }
+    const expression = variable.name + variable.modifiers
+        .map(function(modifier) {
+            return '\\.' + modifier + '\\(\\)';
+        })
+        .join('');
 
     return new RegExp('\\${' + expression + '}', 'g');
 }
 
-function renderString(string, parameters) {
+function preRenderString(string, parameters) {
     const expressionRegex = /\${([^\.\}]+)((\.[^\(]+\(\))*)}/g;
 
     const variables = [];
@@ -50,6 +44,7 @@ function renderString(string, parameters) {
 
     while (expressionResult !== null) {
         const variable = {
+            modifiers: [],
             name: expressionResult[1]
         };
 
@@ -57,8 +52,6 @@ function renderString(string, parameters) {
             const modifiersRegex = /\.[^\(]+\(\)/g;
 
             let modifiersRegexResult = modifiersRegex.exec(expressionResult[2]);
-
-            variable.modifiers = [];
 
             while (modifiersRegexResult !== null) {
                 variable.modifiers.push(modifiersRegexResult[0].slice(1, -2));
@@ -72,33 +65,62 @@ function renderString(string, parameters) {
         expressionResult = expressionRegex.exec(string);
     }
 
-    return variables.reduce(function (template, variable) {
-        return template.replace(buildRegex(variable), applyModifiers(parameters[variable.name], variable.modifiers));
-    }, string);
+    const preRenderedParts = variables
+        .reduce(
+            (parts, variable) => parts
+                .map((part) => part
+                    .split(buildRegex(variable))
+                    .reduce((prts, part, index) => {
+                        if (index === 0) {
+                            return [ part ];
+                        }
+
+                        if (variable.name in parameters) {
+                            return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), part ];
+                        }
+
+                        return [ ...prts, (prmtrs) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
+                    }, null) // The start value doesn't really matter.
+                )
+                .reduce((prts, part) => [ ...prts, ...part ], []),
+            [ string ]
+        );
+
+    return (missingParameters) => preRenderedParts
+        .reduce((renderedParts, preRenderedPart) => {
+            if (typeof preRenderedPart === 'string') {
+                return [ ...renderedParts, preRenderedPart ];
+            }
+
+            return [ ...renderedParts, preRenderedPart(missingParameters) ];
+        }, [ ])
+        .join('');
 }
 
-module.exports.compile = function compile(template, parameters, cause) {
-    if (arguments.length === 2 &&
-            (parameters instanceof Error || (parameters.code !== undefined && parameters.code.slice(-9) === 'Exception'))) {
-        cause = parameters;
-    }
+module.exports.compile = function compile(template, knownParameters = {}) {
+    const renderCode = (template.code === undefined) ? () => undefined : preRenderString(template.code, knownParameters);
+    const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
 
-    const code = (template.code === undefined) ? undefined : renderString(template.code, parameters);
-    const message = (template.message === undefined) ? undefined : renderString(template.message, parameters);
+    return (missingParameters, cause) => {
+        if (arguments.length === 1 &&
+                (missingParameters instanceof Error || (missingParameters !== undefined && missingParameters.code !== undefined && missingParameters.code.slice(-9) === 'Exception'))) {
+            cause = missingParameters;
+        }
 
-    const err = (message === undefined) ? new Error() : new Error(message);
+        const err = (renderMessage === undefined) ? new Error() : new Error(renderMessage(missingParameters));
 
-    if (cause !== undefined) {
-        err.cause = cause;
-    }
+        if (cause !== undefined) {
+            err.cause = cause;
+        }
 
-    if (code !== undefined) {
-        err.code = code;
-    }
+        if (renderCode !== undefined) {
+            err.code = renderCode(missingParameters);
+        }
 
-    if (template.status !== undefined) {
-        err.status = template.status;
-    }
+        if (template.status !== undefined) {
+            err.status = template.status;
+        }
 
-    return err;
+        return err;
+    };
 };

@@ -6,15 +6,34 @@ describe('compilerr', function () {
 
     describe('compile()', function () {
 
-        it('should return an error with a compiled message', function () {
-            var err,
-                template;
-
-            template = {
+        it('should return an error with a compiled message of known parameters', function () {
+            const template = {
                 message: 'A resource at the url called "${url}" could not be found.'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
+                url: '/somewhere.json'
+            });
+
+            expect(render).to.be.a('function');
+
+            const err = render();
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.message).to.equal('A resource at the url called "/somewhere.json" could not be found.');
+        });
+
+        it('should return an error with a compiled message of missing parameters', function () {
+            const template = {
+                message: 'A resource at the url called "${url}" could not be found.'
+            };
+
+            const render = compilerr.compile(template);
+
+            expect(render).to.be.a('function');
+
+            const err = render({
                 url: '/somewhere.json'
             });
 
@@ -23,15 +42,34 @@ describe('compilerr', function () {
             expect(err.message).to.equal('A resource at the url called "/somewhere.json" could not be found.');
         });
 
-        it('should return an error with a compiled code', function () {
-            var err,
-                template;
-
-            template = {
+        it('should return an error with a compiled code of known parameters', function () {
+            const template = {
                 code: 'a-${fake}-code'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
+                fake: 'fake'
+            });
+
+            expect(render).to.be.a('function');
+
+            const err = render();
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.code).to.equal('a-fake-code');
+        });
+
+        it('should return an error with a compiled code of missing parameters', function () {
+            const template = {
+                code: 'a-${fake}-code'
+            };
+
+            const render = compilerr.compile(template);
+
+            expect(render).to.be.a('function');
+
+            const err = render({
                 fake: 'fake'
             });
 
@@ -41,17 +79,18 @@ describe('compilerr', function () {
         });
 
         it('should return an error with a compiled message containing two variables', function () {
-            var err,
-                template;
-
-            template = {
+            const template = {
                 message: 'A ${resource} at the url called "${url}" could not be found.'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
                 resource: 'resource',
                 url: '/somewhere.json'
             });
+
+            expect(render).to.be.a('function');
+
+            const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
 
@@ -59,14 +98,13 @@ describe('compilerr', function () {
         });
 
         it('should return an error with a given status', function () {
-            var err,
-                template;
-
-            template = {
+            const template = {
                 status: 400
             };
 
-            err = compilerr.compile(template);
+            const render = compilerr.compile(template);
+
+            const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
 
@@ -74,16 +112,15 @@ describe('compilerr', function () {
         });
 
         it('should capitalize a variable', function () {
-            var err,
-                template;
-
-            template = {
+            const template = {
                 message: '${text.capitalize()} and even more text.'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
                 text: 'a capitalized text'
             });
+
+            const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
 
@@ -91,16 +128,15 @@ describe('compilerr', function () {
         });
 
         it('should dashify a variable', function () {
-            var err,
-                template;
-
-            template = {
+            const template = {
                 message: '${text.dashify()}'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
                 text: 'a text with spaces and camelCase'
             });
+
+            const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
 
@@ -108,16 +144,15 @@ describe('compilerr', function () {
         });
 
         it('should prepend a variable with an indefinite article', function () {
-            var err,
-                template;
-
-            template = {
+            const template = {
                 message: 'Something like ${error.prependIndefiniteArticle()} can always happen.'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
                 error: 'error'
             });
+
+            const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
 
@@ -125,57 +160,53 @@ describe('compilerr', function () {
         });
 
         it('should apply two modifiers to one variable', function () {
-            var err,
-                template;
-
-            template = {
+            const template = {
                 message: '${error.prependIndefiniteArticle().capitalize()} can always happen.'
             };
 
-            err = compilerr.compile(template, {
+            const render = compilerr.compile(template, {
                 error: 'error'
             });
+
+            const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
 
             expect(err.message).to.equal('An error can always happen.');
         });
 
-        it('should return an error with a given cause as a third argument', function () {
-            var cause,
-                err;
-
-            cause = new Error('a fake cause');
-
-            err = compilerr.compile({}, {}, cause);
-
-            expect(err).to.be.an.instanceOf(Error);
-
-            expect(err.cause).to.equal(cause);
-        });
-
         it('should return an error with a given cause as a second argument', function () {
-            var cause,
-                err;
+            const cause = new Error('a fake cause');
 
-            cause = new Error('a fake cause');
+            const render = compilerr.compile({});
 
-            err = compilerr.compile({}, cause);
+            const err = render({}, cause);
 
             expect(err).to.be.an.instanceOf(Error);
 
             expect(err.cause).to.equal(cause);
         });
 
-        it('should return an error with a given AWS style exception as a second argument', function () {
-            var cause,
-                err;
+        it('should return an error with a given cause as a fist argument', function () {
+            const cause = new Error('a fake cause');
 
-            cause = {
+            const render = compilerr.compile({});
+
+            const err = render(cause);
+
+            expect(err).to.be.an.instanceOf(Error);
+
+            expect(err.cause).to.equal(cause);
+        });
+
+        it('should return an error with a given AWS style exception as a fist argument', function () {
+            const cause = {
                 code: 'SomeCrazyException'
             };
 
-            err = compilerr.compile({}, cause);
+            const render = compilerr.compile({});
+
+            const err = render(cause);
 
             expect(err).to.be.an.instanceOf(Error);
 
