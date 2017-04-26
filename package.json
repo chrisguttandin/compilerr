@@ -41,7 +41,6 @@
     "src/"
   ],
   "homepage": "https://github.com/chrisguttandin/compilerr",
-  "jsnext:main": "src/module.js",
   "keywords": [
     "error",
     "status code",
@@ -49,6 +48,7 @@
   ],
   "license": "MIT",
   "main": "build/node/module.js",
+  "module": "src/module.js",
   "name": "compilerr",
   "repository": {
     "type": "git",
