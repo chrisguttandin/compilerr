@@ -1,7 +1,7 @@
 module.exports = {
     continuous: {
         files: [
-            'src/**/*.js',
+            'src/**/*.ts',
             'test/unit/**/*.js'
         ],
         options: {

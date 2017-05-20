@@ -1,29 +1,30 @@
 import dashify from 'dashify';
 import indefiniteArticle from 'indefinite-article';
+import { IAWSError, IAugmentedError, IErrorTemplate, IParameterObject, IVariable } from './interfaces';
 
-const applyModifiers = (variable, modifiers) => {
+const applyModifiers = (name: string, modifiers: string[]) => {
     if (modifiers === undefined) {
-        return variable;
+        return name;
     }
 
-    return modifiers.reduce((variable, modifier) => {
+    return modifiers.reduce((name, modifier) => {
         if (modifier === 'capitalize') {
-            return variable.charAt(0).toUpperCase() + variable.slice(1);
+            return name.charAt(0).toUpperCase() + name.slice(1);
         }
 
         if (modifier === 'dashify') {
-            return dashify(variable);
+            return dashify(name);
         }
 
         if (modifier === 'prependIndefiniteArticle') {
-            return indefiniteArticle(variable) + ' ' + variable;
+            return indefiniteArticle(name) + ' ' + name;
         }
 
-        return variable;
-    }, variable);
+        return name;
+    }, name);
 };
 
-const buildRegex = (variable) => {
+const buildRegex = (variable: IVariable) => {
     const expression = variable.name + variable.modifiers
         .map((modifier) => '\\.' + modifier + '\\(\\)')
         .join('');
@@ -31,15 +32,15 @@ const buildRegex = (variable) => {
     return new RegExp('\\${' + expression + '}', 'g');
 };
 
-const preRenderString = (string, parameters) => {
+const preRenderString = (string: string, parameters: IParameterObject) => {
     const expressionRegex = /\${([^.}]+)((\.[^(]+\(\))*)}/g;
 
-    const variables = [];
+    const variables: IVariable[] = [];
 
     let expressionResult = expressionRegex.exec(string);
 
     while (expressionResult !== null) {
-        const variable = {
+        const variable: IVariable = {
             modifiers: [],
             name: expressionResult[1]
         };
@@ -63,12 +64,12 @@ const preRenderString = (string, parameters) => {
 
     const preRenderedParts = variables
         .reduce(
-            (parts, variable) => parts
+            (parts: (string | Function)[], variable: IVariable) => parts
                 .map((part) => {
                     if (typeof part === 'string') {
                         return part
                             .split(buildRegex(variable))
-                            .reduce((prts, part, index) => {
+                            .reduce((prts: string[], part: string, index: number) => {
                                 if (index === 0) {
                                     return [ part ];
                                 }
@@ -77,18 +78,18 @@ const preRenderString = (string, parameters) => {
                                     return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), part ];
                                 }
 
-                                return [ ...prts, (prmtrs) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
+                                return [ ...prts, (prmtrs: IParameterObject) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
                             }, [ ]);
                     }
 
                     return [ part ];
                 })
-                .reduce((prts, part) => [ ...prts, ...part ], []),
+                .reduce((prts: (string | Function)[], part: (string | Function)[]) => [ ...prts, ...part ], []),
             [ string ]
         );
 
-    return (missingParameters) => preRenderedParts
-        .reduce((renderedParts, preRenderedPart) => {
+    return (missingParameters: IParameterObject) => preRenderedParts
+        .reduce((renderedParts: string[], preRenderedPart: string | Function) => {
             if (typeof preRenderedPart === 'string') {
                 return [ ...renderedParts, preRenderedPart ];
             }
@@ -98,24 +99,25 @@ const preRenderString = (string, parameters) => {
         .join('');
 };
 
-export const compile = (template, knownParameters = {}) => {
-    const renderCode = (template.code === undefined) ? () => undefined : preRenderString(template.code, knownParameters);
+export const compile = (template: IErrorTemplate, knownParameters: IParameterObject = {}) => {
+    const renderCode = (template.code === undefined) ? undefined : preRenderString(template.code, knownParameters);
     const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
 
-    return (missingParameters = {}, cause = undefined) => {
+    return (missingParameters: Error | IAWSError | IParameterObject = {}, cause?: Error | IAWSError) => {
         if (cause === undefined &&
-                (missingParameters instanceof Error || (missingParameters.code !== undefined && missingParameters.code.slice(-9) === 'Exception'))) {
-            cause = missingParameters;
+                (missingParameters instanceof Error || ((<IAWSError> missingParameters).code !== undefined && (<IAWSError> missingParameters).code.slice(-9) === 'Exception'))) {
+            cause = <Error | IAWSError> missingParameters;
+            missingParameters = {};
         }
 
-        const err = (renderMessage === undefined) ? new Error() : new Error(renderMessage(missingParameters));
+        const err: IAugmentedError = <IAugmentedError> ((renderMessage === undefined) ? new Error() : new Error(renderMessage(<IParameterObject> missingParameters)));
 
         if (cause !== undefined) {
             err.cause = cause;
         }
 
         if (renderCode !== undefined) {
-            err.code = renderCode(missingParameters);
+            err.code = renderCode(<IParameterObject> missingParameters);
         }
 
         if (template.status !== undefined) {

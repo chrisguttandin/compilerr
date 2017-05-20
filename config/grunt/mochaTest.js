@@ -10,9 +10,9 @@ module.exports = {
             clearRequireCache: true,
             require: [
                 () => {
-                    const compiler = require.extensions['.js'];
+                    const compiler = require.extensions['.ts'];
 
-                    require.extensions['.js'] = function (mdl, filename) {
+                    require.extensions['.ts'] = function (mdl, filename) {
                         if (!filename.includes('node_modules') && filename.includes('src/')) {
                             filename = filename
                                 .replace('src/', 'build/node/')
