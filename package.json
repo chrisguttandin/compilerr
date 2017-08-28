@@ -5,6 +5,7 @@
     "url": "https://github.com/chrisguttandin/compilerr/issues"
   },
   "dependencies": {
+    "babel-plugin-external-helpers": "^6.22.0",
     "dashify": "^0.2.0",
     "indefinite-article": "0.0.2",
     "tslint": "^5.7.0"
