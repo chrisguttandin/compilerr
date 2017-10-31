@@ -1,5 +1,7 @@
 declare module 'dashify' {
 
-    export default (string: string) => string;
+    function dashify (string: string): string;
+
+    export default dashify;
 
 }
