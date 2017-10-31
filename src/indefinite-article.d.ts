@@ -1,5 +1,7 @@
 declare module 'indefinite-article' {
 
-    export default (string: string) => string;
+    function indefiniteArticle (string: string): string;
+
+    export default indefiniteArticle;
 
 }
