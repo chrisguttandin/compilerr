@@ -1,6 +1,3 @@
 {
-  "extends": "../node_modules/tsconfig-holy-grail/src/tsconfig-node",
-  "types": [
-    "./dashify"
-  ]
+  "extends": "../node_modules/tsconfig-holy-grail/src/tsconfig-node"
 }
