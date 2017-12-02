@@ -1,35 +1,35 @@
 import dashify from 'dashify';
 import indefiniteArticle from 'indefinite-article';
-import { IAWSError, IAugmentedError, IErrorTemplate, IParameterObject, IVariable } from './interfaces';
+import { IAWSError, IAugmentedError, IErrorTemplate, IParameterObject, IVariable } from './interfaces';
 
 const applyModifiers = (name: string, modifiers: string[]) => {
     if (modifiers === undefined) {
         return name;
     }
 
-    return modifiers.reduce((name, modifier) => {
+    return modifiers.reduce((modifiedName, modifier) => {
         if (modifier === 'capitalize') {
-            return name.charAt(0).toUpperCase() + name.slice(1);
+            return modifiedName.charAt(0).toUpperCase() + modifiedName.slice(1);
         }
 
         if (modifier === 'dashify') {
-            return dashify(name);
+            return dashify(modifiedName);
         }
 
         if (modifier === 'prependIndefiniteArticle') {
-            return indefiniteArticle(name) + ' ' + name;
+            return `${ indefiniteArticle(modifiedName) } ${ modifiedName }`;
         }
 
-        return name;
+        return modifiedName;
     }, name);
 };
 
 const buildRegex = (variable: IVariable) => {
     const expression = variable.name + variable.modifiers
-        .map((modifier) => '\\.' + modifier + '\\(\\)')
+        .map((modifier) => `\\.${ modifier }\\(\\)`)
         .join('');
 
-    return new RegExp('\\${' + expression + '}', 'g');
+    return new RegExp(`\\$\\{${ expression }}`, 'g');
 };
 
 const preRenderString = (string: string, parameters: IParameterObject) => {
@@ -69,16 +69,20 @@ const preRenderString = (string: string, parameters: IParameterObject) => {
                     if (typeof part === 'string') {
                         return part
                             .split(buildRegex(variable))
-                            .reduce((prts: string[], part: string, index: number) => {
+                            .reduce((prts: string[], prt: string, index: number) => {
                                 if (index === 0) {
-                                    return [ part ];
+                                    return [ prt ];
                                 }
 
                                 if (variable.name in parameters) {
-                                    return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), part ];
+                                    return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), prt ];
                                 }
 
-                                return [ ...prts, (prmtrs: IParameterObject) => applyModifiers(prmtrs[variable.name], variable.modifiers), part ];
+                                return [
+                                    ...prts,
+                                    (prmtrs: IParameterObject) => applyModifiers(prmtrs[variable.name], variable.modifiers),
+                                    prt
+                                ];
                             }, [ ]);
                     }
 
@@ -99,25 +103,35 @@ const preRenderString = (string: string, parameters: IParameterObject) => {
         .join('');
 };
 
-export const compile = (template: IErrorTemplate, knownParameters: IParameterObject = {}) => {
+export const compile = (template: IErrorTemplate, knownParameters: IParameterObject = { }) => {
     const renderCode = (template.code === undefined) ? undefined : preRenderString(template.code, knownParameters);
     const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
 
-    return (missingParameters: Error | IAWSError | IParameterObject = {}, cause?: Error | IAWSError) => {
-        if (cause === undefined &&
-                (missingParameters instanceof Error || ((<IAWSError> missingParameters).code !== undefined && (<IAWSError> missingParameters).code.slice(-9) === 'Exception'))) {
-            cause = <Error | IAWSError> missingParameters;
-            missingParameters = {};
-        }
+    function render (causeOrMissingParameters: Error | IAWSError | IParameterObject = { }, optionalCause?: Error | IAWSError) {
+        const hasNoOptionalCause = (optionalCause === undefined &&
+            (causeOrMissingParameters instanceof Error ||
+                ((<IAWSError> causeOrMissingParameters).code !== undefined &&
+                    (<IAWSError> causeOrMissingParameters).code.slice(-9) === 'Exception')));
+        const { cause, missingParameters } = hasNoOptionalCause ?
+            {
+                cause: <Error | IAWSError> causeOrMissingParameters,
+                missingParameters: { }
+            } :
+            {
+                cause: <Error | IAWSError> optionalCause,
+                missingParameters: <IParameterObject> causeOrMissingParameters
+            };
 
-        const err: IAugmentedError = <IAugmentedError> ((renderMessage === undefined) ? new Error() : new Error(renderMessage(<IParameterObject> missingParameters)));
+        const err: IAugmentedError = <IAugmentedError> ((renderMessage === undefined) ?
+            new Error() :
+            new Error(renderMessage(<IParameterObject> missingParameters)));
 
-        if (cause !== undefined) {
+        if (cause !== null) {
             err.cause = cause;
         }
 
         if (renderCode !== undefined) {
-            err.code = renderCode(<IParameterObject> missingParameters);
+            err.code = renderCode(missingParameters);
         }
 
         if (template.status !== undefined) {
@@ -125,5 +139,7 @@ export const compile = (template: IErrorTemplate, knownParameters: IParameterObj
         }
 
         return err;
-    };
+    }
+
+    return render;
 };
