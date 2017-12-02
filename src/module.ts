@@ -107,6 +107,8 @@ export const compile = (template: IErrorTemplate, knownParameters: IParameterObj
     const renderCode = (template.code === undefined) ? undefined : preRenderString(template.code, knownParameters);
     const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
 
+    function render (missingParameters: IParameterObject, cause?: Error | IAWSError): IAugmentedError;
+    function render (cause: Error | IAWSError): IAugmentedError;
     function render (causeOrMissingParameters: Error | IAWSError | IParameterObject = { }, optionalCause?: Error | IAWSError) {
         const hasNoOptionalCause = (optionalCause === undefined &&
             (causeOrMissingParameters instanceof Error ||
