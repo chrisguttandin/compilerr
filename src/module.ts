@@ -2,6 +2,8 @@ import dashify from 'dashify';
 import indefiniteArticle from 'indefinite-article';
 import { IAWSError, IAugmentedError, IErrorTemplate, IParameterObject, IVariable } from './interfaces';
 
+export * from './interfaces';
+
 const applyModifiers = (name: string, modifiers: string[]) => {
     if (modifiers === undefined) {
         return name;
