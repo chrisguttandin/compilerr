@@ -11,7 +11,12 @@ const applyModifiers = (name: string, modifiers: string[]) => {
 
     return modifiers.reduce((modifiedName, modifier) => {
         if (modifier === 'capitalize') {
-            return modifiedName.charAt(0).toUpperCase() + modifiedName.slice(1);
+            const head = modifiedName
+                .charAt(0)
+                .toUpperCase();
+            const tail = modifiedName.slice(1);
+
+            return `${ head }${ tail }`;
         }
 
         if (modifier === 'dashify') {
