@@ -46,7 +46,7 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^8.3.0",
     "rollup-plugin-node-resolve": "^3.0.2",
-    "sinon": "^4.2.2",
+    "sinon": "^4.3.0",
     "sinon-chai": "^2.14.0",
     "ts-loader": "^3.5.0",
     "tsconfig-holy-grail": "^3.0.21",
