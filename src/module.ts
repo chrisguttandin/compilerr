@@ -1,8 +1,10 @@
 import dashify from 'dashify';
 import indefiniteArticle from 'indefinite-article';
 import { IAWSError, IAugmentedError, IErrorTemplate, IParameterObject, IVariable } from './interfaces';
+import { TRenderFunction } from './types';
 
 export * from './interfaces';
+export * from './types';
 
 const applyModifiers = (name: string, modifiers: string[]) => {
     if (modifiers === undefined) {
@@ -71,12 +73,12 @@ const preRenderString = (string: string, parameters: IParameterObject) => {
 
     const preRenderedParts = variables
         .reduce(
-            (parts: (string | Function)[], variable: IVariable) => parts
+            (parts: (string | TRenderFunction)[], variable: IVariable) => parts
                 .map((part) => {
                     if (typeof part === 'string') {
                         return part
                             .split(buildRegex(variable))
-                            .reduce((prts: string[], prt: string, index: number) => {
+                            .reduce((prts: (string | TRenderFunction)[], prt: string, index: number) => {
                                 if (index === 0) {
                                     return [ prt ];
                                 }
@@ -95,12 +97,12 @@ const preRenderString = (string: string, parameters: IParameterObject) => {
 
                     return [ part ];
                 })
-                .reduce((prts: (string | Function)[], part: (string | Function)[]) => [ ...prts, ...part ], []),
+                .reduce((prts: (string | TRenderFunction)[], part: (string | TRenderFunction)[]) => [ ...prts, ...part ], []),
             [ string ]
         );
 
     return (missingParameters: IParameterObject) => preRenderedParts
-        .reduce((renderedParts: string[], preRenderedPart: string | Function) => {
+        .reduce((renderedParts: string[], preRenderedPart: string | TRenderFunction) => {
             if (typeof preRenderedPart === 'string') {
                 return [ ...renderedParts, preRenderedPart ];
             }
