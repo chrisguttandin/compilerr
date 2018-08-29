@@ -10,7 +10,6 @@
     }
   },
   "dependencies": {
-    "babel-runtime": "^6.26.0",
     "dashify": "^1.0.0",
     "indefinite-article": "0.0.2",
     "tslib": "^1.9.3"
@@ -21,6 +20,7 @@
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.0.0",
     "@commitlint/cli": "^7.0.0",
     "@commitlint/config-angular": "^7.0.1",
     "babel-plugin-external-helpers": "^6.22.0",
