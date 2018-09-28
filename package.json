@@ -73,6 +73,12 @@
     "src/"
   ],
   "homepage": "https://github.com/chrisguttandin/compilerr",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint --edit --extends @commitlint/config-angular",
+      "pre-commit": "grunt lint"
+    }
+  },
   "keywords": [
     "error",
     "status code",
@@ -87,8 +93,6 @@
     "url": "https://github.com/chrisguttandin/compilerr.git"
   },
   "scripts": {
-    "commitmsg": "commitlint --edit --extends @commitlint/config-angular",
-    "precommit": "grunt lint",
     "prepublishOnly": "grunt build",
     "test": "grunt lint && grunt test"
   },
