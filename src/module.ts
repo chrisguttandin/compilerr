@@ -118,7 +118,10 @@ export const compile = (template: IErrorTemplate, knownParameters: IParameterObj
 
     function render (missingParameters: IParameterObject, cause?: Error | IAWSError): IAugmentedError;
     function render (cause: Error | IAWSError): IAugmentedError;
-    function render (causeOrMissingParameters: Error | IAWSError | IParameterObject = { }, optionalCause?: Error | IAWSError) {
+    function render (
+        causeOrMissingParameters: Error | IAWSError | IParameterObject = { },
+        optionalCause?: Error | IAWSError
+    ): IAugmentedError {
         const hasNoOptionalCause = (optionalCause === undefined &&
             (causeOrMissingParameters instanceof Error ||
                 ((<IAWSError> causeOrMissingParameters).code !== undefined &&
