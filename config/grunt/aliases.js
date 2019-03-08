@@ -17,6 +17,6 @@ module.exports = {
     test: [
         'build',
         'karma:test',
-        'mochaTest:test'
+        'sh:test-unit'
     ]
 };
