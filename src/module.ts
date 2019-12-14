@@ -3,8 +3,12 @@ import indefiniteArticle from 'indefinite-article';
 import { IAWSError, IAugmentedError, IErrorTemplate, IParameterObject, IVariable } from './interfaces';
 import { TRenderFunction } from './types';
 
-export * from './interfaces';
-export * from './types';
+/*
+ * @todo Explicitly referencing the barrel file seems to be necessary when enabling the
+ * isolatedModules compiler option.
+ */
+export * from './interfaces/index';
+export * from './types/index';
 
 const applyModifiers = (name: string, modifiers: string[]) => {
     if (modifiers === undefined) {
