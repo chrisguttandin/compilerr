@@ -17,12 +17,10 @@ const applyModifiers = (name: string, modifiers: string[]) => {
 
     return modifiers.reduce((modifiedName, modifier) => {
         if (modifier === 'capitalize') {
-            const head = modifiedName
-                .charAt(0)
-                .toUpperCase();
+            const head = modifiedName.charAt(0).toUpperCase();
             const tail = modifiedName.slice(1);
 
-            return `${ head }${ tail }`;
+            return `${head}${tail}`;
         }
 
         if (modifier === 'dashify') {
@@ -30,7 +28,7 @@ const applyModifiers = (name: string, modifiers: string[]) => {
         }
 
         if (modifier === 'prependIndefiniteArticle') {
-            return `${ indefiniteArticle(modifiedName) } ${ modifiedName }`;
+            return `${indefiniteArticle(modifiedName)} ${modifiedName}`;
         }
 
         return modifiedName;
@@ -38,11 +36,9 @@ const applyModifiers = (name: string, modifiers: string[]) => {
 };
 
 const buildRegex = (variable: IVariable) => {
-    const expression = variable.name + variable.modifiers
-        .map((modifier) => `\\.${ modifier }\\(\\)`)
-        .join('');
+    const expression = variable.name + variable.modifiers.map((modifier) => `\\.${modifier}\\(\\)`).join('');
 
-    return new RegExp(`\\$\\{${ expression }}`, 'g');
+    return new RegExp(`\\$\\{${expression}}`, 'g');
 };
 
 const preRenderString = (string: string, parameters: IParameterObject) => {
@@ -75,74 +71,70 @@ const preRenderString = (string: string, parameters: IParameterObject) => {
         expressionResult = expressionRegex.exec(string);
     }
 
-    const preRenderedParts = variables
-        .reduce(
-            (parts: (string | TRenderFunction)[], variable: IVariable) => parts
+    const preRenderedParts = variables.reduce(
+        (parts: (string | TRenderFunction)[], variable: IVariable) =>
+            parts
                 .map((part) => {
                     if (typeof part === 'string') {
-                        return part
-                            .split(buildRegex(variable))
-                            .reduce((prts: (string | TRenderFunction)[], prt: string, index: number) => {
-                                if (index === 0) {
-                                    return [ prt ];
-                                }
+                        return part.split(buildRegex(variable)).reduce((prts: (string | TRenderFunction)[], prt: string, index: number) => {
+                            if (index === 0) {
+                                return [prt];
+                            }
 
-                                if (variable.name in parameters) {
-                                    return [ ...prts, applyModifiers(parameters[variable.name], variable.modifiers), prt ];
-                                }
+                            if (variable.name in parameters) {
+                                return [...prts, applyModifiers(parameters[variable.name], variable.modifiers), prt];
+                            }
 
-                                return [
-                                    ...prts,
-                                    (prmtrs: IParameterObject) => applyModifiers(prmtrs[variable.name], variable.modifiers),
-                                    prt
-                                ];
-                            }, [ ]);
+                            return [...prts, (prmtrs: IParameterObject) => applyModifiers(prmtrs[variable.name], variable.modifiers), prt];
+                        }, []);
                     }
 
-                    return [ part ];
+                    return [part];
                 })
-                .reduce((prts: (string | TRenderFunction)[], part: (string | TRenderFunction)[]) => [ ...prts, ...part ], []),
-            [ string ]
-        );
+                .reduce((prts: (string | TRenderFunction)[], part: (string | TRenderFunction)[]) => [...prts, ...part], []),
+        [string]
+    );
 
-    return (missingParameters: IParameterObject) => preRenderedParts
-        .reduce((renderedParts: string[], preRenderedPart: string | TRenderFunction) => {
-            if (typeof preRenderedPart === 'string') {
-                return [ ...renderedParts, preRenderedPart ];
-            }
+    return (missingParameters: IParameterObject) =>
+        preRenderedParts
+            .reduce((renderedParts: string[], preRenderedPart: string | TRenderFunction) => {
+                if (typeof preRenderedPart === 'string') {
+                    return [...renderedParts, preRenderedPart];
+                }
 
-            return [ ...renderedParts, preRenderedPart(missingParameters) ];
-        }, [ ])
-        .join('');
+                return [...renderedParts, preRenderedPart(missingParameters)];
+            }, [])
+            .join('');
 };
 
-export const compile = (template: IErrorTemplate, knownParameters: IParameterObject = { }) => {
-    const renderCode = (template.code === undefined) ? undefined : preRenderString(template.code, knownParameters);
-    const renderMessage = (template.message === undefined) ? undefined : preRenderString(template.message, knownParameters);
+export const compile = (template: IErrorTemplate, knownParameters: IParameterObject = {}) => {
+    const renderCode = template.code === undefined ? undefined : preRenderString(template.code, knownParameters);
+    const renderMessage = template.message === undefined ? undefined : preRenderString(template.message, knownParameters);
 
-    function render (missingParameters: IParameterObject, cause?: Error | IAWSError): IAugmentedError;
-    function render (cause: Error | IAWSError): IAugmentedError;
-    function render (
-        causeOrMissingParameters: Error | IAWSError | IParameterObject = { },
+    function render(missingParameters: IParameterObject, cause?: Error | IAWSError): IAugmentedError;
+    function render(cause: Error | IAWSError): IAugmentedError;
+    function render(
+        causeOrMissingParameters: Error | IAWSError | IParameterObject = {},
         optionalCause?: Error | IAWSError
     ): IAugmentedError {
-        const hasNoOptionalCause = (optionalCause === undefined &&
+        const hasNoOptionalCause =
+            optionalCause === undefined &&
             (causeOrMissingParameters instanceof Error ||
-                ((<IAWSError> causeOrMissingParameters).code !== undefined &&
-                    (<IAWSError> causeOrMissingParameters).code.slice(-9) === 'Exception')));
-        const { cause, missingParameters } = hasNoOptionalCause ?
-            {
-                cause: <Error | IAWSError> causeOrMissingParameters,
-                missingParameters: { }
-            } :
-            {
-                cause: <Error | IAWSError> optionalCause,
-                missingParameters: <IParameterObject> causeOrMissingParameters
-            };
+                ((<IAWSError>causeOrMissingParameters).code !== undefined &&
+                    (<IAWSError>causeOrMissingParameters).code.slice(-9) === 'Exception'));
+        const { cause, missingParameters } = hasNoOptionalCause
+            ? {
+                  cause: <Error | IAWSError>causeOrMissingParameters,
+                  missingParameters: {}
+              }
+            : {
+                  cause: <Error | IAWSError>optionalCause,
+                  missingParameters: <IParameterObject>causeOrMissingParameters
+              };
 
-        const err: IAugmentedError = <IAugmentedError> ((renderMessage === undefined) ?
-            new Error() :
-            new Error(renderMessage(<IParameterObject> missingParameters)));
+        const err: IAugmentedError = <IAugmentedError>(
+            (renderMessage === undefined ? new Error() : new Error(renderMessage(<IParameterObject>missingParameters)))
+        );
 
         if (cause !== null) {
             err.cause = cause;

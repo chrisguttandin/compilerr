@@ -1,14 +1,9 @@
 module.exports = {
     continuous: {
-        files: [
-            'src/**/*.ts',
-            'test/unit/**/*.js'
-        ],
+        files: ['src/**/*.ts', 'test/unit/**/*.js'],
         options: {
             spawn: false
         },
-        tasks: [
-            'test'
-        ]
+        tasks: ['test']
     }
 };

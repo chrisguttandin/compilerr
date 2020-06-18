@@ -1,5 +1,3 @@
 export interface IParameterObject {
-
-    [ key: string ]: string;
-
+    [key: string]: string;
 }

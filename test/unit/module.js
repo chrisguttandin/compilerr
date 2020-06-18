@@ -1,9 +1,7 @@
 import * as compilerr from '../../src/module';
 
 describe('compilerr', function () {
-
     describe('compile()', function () {
-
         it('should return an error with a compiled message of known parameters', function () {
             const template = {
                 message: 'A resource at the url called "${url}" could not be found.'
@@ -207,7 +205,5 @@ describe('compilerr', function () {
 
             expect(err.cause).to.equal(cause);
         });
-
     });
-
 });
