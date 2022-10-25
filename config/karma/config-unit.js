@@ -96,6 +96,7 @@ module.exports = (config) => {
                     base: 'SauceLabs',
                     browserName: 'firefox',
                     captureTimeout: 300,
+                    geckodriverVersion: '0.30.0',
                     platform: 'macOS 12'
                 },
                 SafariSauceLabs: {
