@@ -13,12 +13,13 @@
         "@babel/runtime": "^7.22.6",
         "dashify": "^2.0.0",
         "indefinite-article": "0.0.2",
+        "linked": "^0.2.0",
         "tslib": "^2.6.1"
     },
     "description": "A kind of templating system to compile errors.",
     "devDependencies": {
         "@babel/cli": "^7.22.15",
-        "@babel/core": "^7.22.17",
+        "@babel/core": "^7.22.19",
         "@babel/plugin-external-helpers": "^7.22.5",
         "@babel/plugin-transform-runtime": "^7.22.15",
         "@babel/preset-env": "^7.22.15",
