@@ -13,7 +13,6 @@
         "@babel/runtime": "^7.22.6",
         "dashify": "^2.0.0",
         "indefinite-article": "0.0.2",
-        "linked": "^0.2.0",
         "tslib": "^2.6.1"
     },
     "description": "A kind of templating system to compile errors.",
