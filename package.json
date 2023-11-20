@@ -17,7 +17,7 @@
     },
     "description": "A kind of templating system to compile errors.",
     "devDependencies": {
-        "@babel/cli": "^7.23.0",
+        "@babel/cli": "^7.23.4",
         "@babel/core": "^7.23.3",
         "@babel/plugin-external-helpers": "^7.23.3",
         "@babel/plugin-transform-runtime": "^7.23.3",
