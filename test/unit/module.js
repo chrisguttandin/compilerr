@@ -1,4 +1,5 @@
-import * as compilerr from '../../src/module';
+import { describe, expect, it } from 'vitest';
+import { compile } from '../../src/module';
 
 describe('compilerr', function () {
     describe('compile()', function () {
@@ -6,7 +7,7 @@ describe('compilerr', function () {
             const template = {
                 message: 'A resource at the url called "${url}" could not be found.'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 url: '/somewhere.json'
             });
 
@@ -23,7 +24,7 @@ describe('compilerr', function () {
             const template = {
                 message: 'A resource at the url called "${url}" could not be found.'
             };
-            const render = compilerr.compile(template);
+            const render = compile(template);
 
             expect(render).to.be.a('function');
 
@@ -40,7 +41,7 @@ describe('compilerr', function () {
             const template = {
                 code: 'a-${fake}-code'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 fake: 'fake'
             });
 
@@ -57,7 +58,7 @@ describe('compilerr', function () {
             const template = {
                 code: 'a-${fake}-code'
             };
-            const render = compilerr.compile(template);
+            const render = compile(template);
 
             expect(render).to.be.a('function');
 
@@ -74,7 +75,7 @@ describe('compilerr', function () {
             const template = {
                 message: 'A ${resource} at the url called "${url}" could not be found.'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 resource: 'resource',
                 url: '/somewhere.json'
             });
@@ -92,7 +93,7 @@ describe('compilerr', function () {
             const template = {
                 message: 'A ${resource} at the url called "${url}" could not be found.'
             };
-            const render = compilerr.compile(template);
+            const render = compile(template);
 
             expect(render).to.be.a('function');
 
@@ -110,7 +111,7 @@ describe('compilerr', function () {
             const template = {
                 status: 400
             };
-            const render = compilerr.compile(template);
+            const render = compile(template);
             const err = render();
 
             expect(err).to.be.an.instanceOf(Error);
@@ -122,7 +123,7 @@ describe('compilerr', function () {
             const template = {
                 message: '${text.capitalize()} and even more text.'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 text: 'a capitalized text'
             });
             const err = render();
@@ -136,7 +137,7 @@ describe('compilerr', function () {
             const template = {
                 message: '${text.dashify()}'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 text: 'a text with spaces and camelCase'
             });
             const err = render();
@@ -150,7 +151,7 @@ describe('compilerr', function () {
             const template = {
                 message: 'Something like ${error.prependIndefiniteArticle()} can always happen.'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 error: 'error'
             });
             const err = render();
@@ -164,7 +165,7 @@ describe('compilerr', function () {
             const template = {
                 message: '${error.prependIndefiniteArticle().capitalize()} can always happen.'
             };
-            const render = compilerr.compile(template, {
+            const render = compile(template, {
                 error: 'error'
             });
             const err = render();
@@ -176,7 +177,7 @@ describe('compilerr', function () {
 
         it('should return an error with a given cause as a second argument', function () {
             const cause = new Error('a fake cause');
-            const render = compilerr.compile({});
+            const render = compile({});
             const err = render({}, cause);
 
             expect(err).to.be.an.instanceOf(Error);
@@ -186,7 +187,7 @@ describe('compilerr', function () {
 
         it('should return an error with a given cause as a fist argument', function () {
             const cause = new Error('a fake cause');
-            const render = compilerr.compile({});
+            const render = compile({});
             const err = render(cause);
 
             expect(err).to.be.an.instanceOf(Error);
@@ -198,7 +199,7 @@ describe('compilerr', function () {
             const cause = {
                 code: 'SomeCrazyException'
             };
-            const render = compilerr.compile({});
+            const render = compile({});
             const err = render(cause);
 
             expect(err).to.be.an.instanceOf(Error);
