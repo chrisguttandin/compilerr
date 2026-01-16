@@ -10,7 +10,7 @@
         }
     },
     "dependencies": {
-        "@babel/runtime": "^7.28.4",
+        "@babel/runtime": "^7.28.6",
         "dashify": "^2.0.0",
         "indefinite-article": "0.0.2",
         "tslib": "^2.8.1"
