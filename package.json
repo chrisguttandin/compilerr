@@ -78,5 +78,5 @@
         "test:unit-node": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"unit\" ] && [ \"$TARGET\" = \"\" -o \"$TARGET\" = \"node\" ]; then npx vitest --browser.enabled false --config config/vitest/unit.ts; fi"
     },
     "types": "build/es2019/module.d.ts",
-    "version": "13.0.0"
+    "version": "13.0.1"
 }
